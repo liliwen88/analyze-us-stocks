@@ -1,0 +1,7 @@
+interface:
+  display_name: "美股综合分析"
+  short_description: "结合行情、新闻、财报和趋势生成中文美股综合研报"
+  default_prompt: "Use $analyze-us-stocks to analyze a US stock or market theme with latest data, news, probabilities, evidence, and risks."
+
+policy:
+  allow_implicit_invocation: true
