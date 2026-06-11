@@ -1,6 +1,19 @@
 ---
 name: analyze-us-stocks
-description: Analyze US stocks, Nasdaq-listed companies, US market indices, sectors, themes, earnings, valuation, technicals, news catalysts, and investor sentiment. Use when the agent is asked in Chinese or English to produce a US equity market report, individual stock research report, market hot-trend scan, earnings/news interpretation, buy/sell/hold view, or probability-based short-, medium-, or long-term price direction forecast using latest market data and news. Supports Claude Code (native), OpenAI Codex CLI (plugin), OpenAI GPTs/Assistants (config), and generic LLM agents (prompt injection).
+description: >
+  Analyze US stocks, Nasdaq-listed companies, US market indices, sectors, themes,
+  earnings, valuation, technicals, news catalysts, and investor sentiment. Use when
+  asked in Chinese or English to produce a US equity market report, individual stock
+  research report, market hot-trend scan, earnings/news interpretation, buy/sell/hold
+  view, or probability-based short-, medium-, or long-term price direction forecast
+  using the latest market data and news.
+license: MIT
+compatibility: Intended for coding agents with web search and web fetch capabilities.
+metadata:
+  owner: liliwen
+  version: "1.0.0"
+  language: zh-CN
+  category: equity-research
 ---
 
 # Analyze US Stocks
@@ -38,7 +51,7 @@ For deep analysis, consult `references/analytical-dimensions.md` and apply the d
 
 **2a. Identify required data**
 
-Based on analysis depth and task type, determine which queries to execute. Use `references/search-queries.md` for pre-built query templates. Select dimensions from `references/analytical-dimensions.md` for deep analysis.
+Based on analysis depth and task type, determine which queries to execute. Use `references/search-queries.md` for pre-built query templates (available in both English and Chinese). Select dimensions from `references/analytical-dimensions.md` for deep analysis.
 
 **2b. Execute data collection in parallel rounds**
 
@@ -49,7 +62,7 @@ Execute queries in parallel rounds as defined in `references/search-queries.md`:
 - **Round 3 (P2 — deep analysis)**: Extended dimensions per the dimension selection matrix. Run dimension queries in parallel batches of up to 8.
 - **Round 4 (fill gaps)**: Based on data completeness, execute supplementary queries.
 
-Use `WebSearch` for discovery and `WebFetch` for deep content extraction (SEC EDGAR files, IR pages, data aggregation pages). Prefer MCP Server tools (Yahoo Finance, Finnhub) if available for structured data.
+Use WebSearch for discovery and WebFetch for deep content extraction (SEC EDGAR files, IR pages, data aggregation pages). Prefer MCP Server tools (Yahoo Finance, Finnhub) if available for structured data.
 
 **2c. Record data quality metadata**
 

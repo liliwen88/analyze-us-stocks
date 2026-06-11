@@ -1,12 +1,18 @@
+# Codex Skill Metadata: 美股综合分析
+# This file provides UI metadata and tool dependencies for the analyze-us-stocks skill
+# when loaded in OpenAI Codex CLI.
+#
+# Reference: https://developers.openai.com/codex/skills
+
 interface:
   display_name: "美股综合分析"
   short_description: "结合行情、新闻、财报、技术面、12维深度分析、量化评分和概率框架生成中文美股综合研报"
-  default_prompt: "Use $analyze-us-stocks to analyze a US stock or market theme with latest data, news, 12-dimensional analysis, quantitative scoring, probability scenarios, evidence, and risks. Follow the workflow defined in SKILL.md: define target/horizon → parallel data collection → cross-validate → quantitative score + probability → sensitivity analysis → produce report. Apply data-quality.md rules for source grading (A/B/C/D), freshness TTL, and cross-validation. Use analytical-dimensions.md to select extended dimensions for deep analysis."
+  default_prompt: "Use analyze-us-stocks to analyze a US stock or market theme with latest data, news, 12-dimensional analysis, quantitative scoring, probability scenarios, evidence, and risks. Follow the workflow: define target/horizon → parallel data collection → cross-validate → quantitative score + probability → sensitivity analysis → produce report. Apply data-quality.md rules for source grading (A/B/C/D), freshness TTL, and cross-validation. Use analytical-dimensions.md to select extended dimensions for deep analysis."
 
 policy:
   allow_implicit_invocation: true
 
-# Agent capabilities
+# Agent capabilities declared to Codex
 capabilities:
   - realtime_market_data     # 实时行情获取
   - fundamental_analysis     # 基本面分析（财报、利润率、FCF、指引）
@@ -42,7 +48,8 @@ recommended_tools:
     - finnhub_mcp            # Finnhub MCP — 实时行情、SEC、内幕交易、ESG
     - alpha_vantage_mcp      # Alpha Vantage MCP — 行情与技术指标
 
-# Reference documents (loaded from references/)
+# Reference documents (loaded from plugin root references/)
+# Codex loads these relative to the plugin root directory
 references:
   analytical_dimensions: "references/analytical-dimensions.md"
   data_quality: "references/data-quality.md"
@@ -71,7 +78,8 @@ analysis_depth:
     scoring: "full 21-sub-item scoring"
     sections: [conclusion, probability, quantitative_score_detail, market_background, fundamentals, peer_comparison_matrix, news_catalysts, technicals, extended_dimensions_detail, sensitivity_analysis, counterarguments, watchlist, data_quality_assessment, sources]
 
-# Output schema (simplified — see agent-integration.md for full JSON Schema)
+# Output JSON Schema (stock-analysis-report-v1)
+# Full schema documented in references/agent-integration.md §4
 output_schema:
   type: object
   required: [metadata, conclusion, probability, key_evidence, risks, sources_summary]

@@ -1,0 +1,23 @@
+{
+  "yahoo-finance": {
+    "command": "npx",
+    "args": ["-y", "@anthropic/yahoo-finance-mcp"],
+    "description": "Yahoo Finance MCP — 实时行情、历史数据、基本面统计、持仓数据、期权链"
+  },
+  "finnhub": {
+    "command": "npx",
+    "args": ["-y", "finnhub-mcp-server"],
+    "env": {
+      "FINNHUB_API_KEY": "${FINNHUB_API_KEY}"
+    },
+    "description": "Finnhub MCP — 实时行情、公司基本面、SEC文件、内幕交易、新闻、分析师评级、ESG评分"
+  },
+  "alpha-vantage": {
+    "command": "npx",
+    "args": ["-y", "alpha-vantage-mcp-server"],
+    "env": {
+      "ALPHA_VANTAGE_API_KEY": "${ALPHA_VANTAGE_API_KEY}"
+    },
+    "description": "Alpha Vantage MCP — 实时/历史行情、技术指标、外汇/加密货币数据、经济指标"
+  }
+}

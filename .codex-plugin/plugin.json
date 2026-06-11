@@ -1,0 +1,55 @@
+{
+  "name": "analyze-us-stocks",
+  "version": "1.0.0",
+  "description": "US stock comprehensive analysis with 12-dimensional deep research, quantitative scoring, and probability framework for investment decisions",
+  "author": {
+    "name": "liliwen"
+  },
+  "keywords": [
+    "stocks",
+    "investing",
+    "finance",
+    "nasdaq",
+    "equity-research",
+    "market-analysis",
+    "chinese"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "美股综合分析",
+    "shortDescription": "结合行情、新闻、财报、技术面、12维深度分析、量化评分和概率框架生成中文美股综合研报",
+    "longDescription": "专业的美国股票分析技能，支持三层分析深度（快速/标准/深度），涵盖：\n• 实时行情与市场背景\n• 基本面分析（营收、利润率、FCF、资产负债表、指引）\n• 技术面分析（趋势、均线、支撑阻力、量价关系）\n• 估值分析（PE/PEG/EV-EBITDA/同行对比）\n• 新闻催化与情绪分析\n• 三情景概率预测（看涨/中性/看跌，概率和=100%）\n• 0-100量化评分（6大类21子项）\n• 同行对比矩阵（估值/增长/盈利多维度）\n• 12维扩展分析：内幕交易、机构持仓、空头持仓、期权流、因子暴露、季节性、竞争护城河、管理层质量、供应链风险、资本配置、ESG评估\n• 敏感性分析（营收/利率/估值变动场景）\n• 多时间框架预测（短期1-4周/中期1-3月/长期6-12月）\n• 数据质量管控：来源可靠性A/B/C/D四级评分、时效性TTL检测、多源交叉验证\n\n适用于各类美股投资研究和决策场景，输出中文结构化研报。",
+    "developerName": "liliwen",
+    "category": "Data Analytics",
+    "capabilities": [
+      "realtime_market_data",
+      "fundamental_analysis",
+      "technical_analysis",
+      "valuation_analysis",
+      "news_sentiment",
+      "probability_forecast",
+      "quantitative_scoring",
+      "peer_comparison",
+      "risk_assessment",
+      "insider_analysis",
+      "institutional_analysis",
+      "short_interest_analysis",
+      "options_flow_analysis",
+      "factor_exposure",
+      "seasonality_analysis",
+      "competitive_moat",
+      "management_quality",
+      "supply_chain_risk",
+      "capital_allocation",
+      "esg_assessment",
+      "sensitivity_analysis",
+      "multi_horizon_forecast"
+    ],
+    "defaultPrompt": [
+      "Use analyze-us-stocks to analyze AAPL with latest data and generate a standard report in Chinese",
+      "Use analyze-us-stocks to do a deep analysis of NVDA including all 12 extended dimensions",
+      "Use analyze-us-stocks to quickly scan TSLA before market open today"
+    ]
+  }
+}
