@@ -28,6 +28,14 @@ Do not let one category dominate unless it is clearly the main driver, such as a
 For deep analysis, also weigh evidence from extended dimensions defined in `analytical-dimensions.md`:
 - Insider trading, institutional ownership, options flow, competitive moat, management quality, supply chain risk, capital allocation, ESG factors, seasonality, factor exposure.
 
+## Calibration Rules
+
+- Start near a neutral base case when evidence is mixed; move probabilities only when fresh evidence changes the expected distribution of outcomes.
+- Require at least two independent, decision-relevant positives before assigning bullish probability above 60%.
+- Require at least two independent, decision-relevant negatives before assigning bearish probability above 55%.
+- Cap confidence at medium on earnings day, FOMC day, major litigation/regulatory news, or other rapidly changing events unless primary sources are clear and markets have already digested the news.
+- If the analysis uses delayed quote data, stale short-interest data, or single-source news, keep probabilities closer to 50/50 and explain the missing validation.
+
 ## Multi-Horizon Probability
 
 For standard and deep analysis, produce a probability table for each horizon:

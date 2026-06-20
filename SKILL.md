@@ -1,170 +1,170 @@
 ---
 name: analyze-us-stocks
-description: Analyze US stocks, Nasdaq-listed companies, US market indices, sectors, themes, earnings, valuation, technicals, news catalysts, and investor sentiment. Use when the agent is asked in Chinese or English to produce a US equity market report, individual stock research report, market hot-trend scan, earnings/news interpretation, buy/sell/hold view, or probability-based short-, medium-, or long-term price direction forecast using latest market data and news. Supports Claude Code (native), OpenAI Codex CLI (plugin), OpenAI GPTs/Assistants (config), and generic LLM agents (prompt injection).
+description: Analyze US stocks, ETFs, Nasdaq/NYSE companies, US indices, sectors, themes, earnings, valuation, technicals, news catalysts, positioning, and probabilistic trade or investment views. Use when asked in Chinese or English for US equity research, market trend scans, individual stock reports, earnings or news reactions, buy/hold/sell views, watchlist comparisons, risk checks, or short-, medium-, or long-horizon price direction forecasts using current market data, filings, and news.
 ---
 
 # Analyze US Stocks
 
-## Core Rule
+## Operating Standard
 
-Always ground the analysis in current evidence. Do not rely only on model memory for prices, news, earnings dates, analyst moves, macro data, or management guidance. If current data or browsing tools are unavailable, state that the analysis is limited and ask to enable retrieval rather than inventing facts.
+Use this skill to produce evidence-grounded US equity research. Output in Chinese by default unless the user asks for another language.
 
-Write the final report in Chinese by default. Give a clear action view when the user asks for investment advice, but frame it as research judgment, not guaranteed profit or personalized financial advice.
+- Ground prices, news, earnings dates, analyst actions, macro data, guidance, and filings in current retrieval. Never rely on memory for market-sensitive facts.
+- Start with the conclusion, then show the evidence and risks. Keep quick answers compact.
+- Treat outputs as research support, not personalized financial advice. If the user asks for position sizing or suitability, ask for risk tolerance, holding period, portfolio context, and current position before giving a sizing view.
+- Label each material fact with a source grade (A/B/C/D), source name or URL, and timestamp/date.
+- If retrieval is unavailable or core data is stale, state the limitation near the conclusion and cap confidence.
 
-## Analysis Depth
+## Fast Triage
 
-Before starting, determine the analysis depth based on the user's request:
+Before retrieval, identify:
 
-| Depth | Scope | Time | When to Use |
-|-------|-------|------|-------------|
-| **Quick** | Price, news, technicals, probability | 5–10 min | 快速扫描、盘中问股 |
-| **Standard** | Quick + fundamentals, valuation, peers | 15–30 min | 标准个股/市场报告 |
-| **Deep** | Standard + all 12 extended dimensions | 30+ min | 深度研究、重大投资决策 |
+- Target: single stock, ETF/index, sector/theme, comparison, watchlist, or event.
+- User goal: intraday trade, swing trade, long-term investment, earnings/news reaction, risk review, or idea scan.
+- Horizon: default to short term 1-4 weeks, medium term 1-3 months, and long term 6-12 months unless specified.
+- Depth: choose quick, standard, or deep.
 
-For deep analysis, consult `references/analytical-dimensions.md` and apply the dimension selection matrix.
+Ask at most one concise clarification only when the ticker/target is ambiguous or the user requests personal suitability/sizing. Otherwise proceed with reasonable defaults.
 
----
+| Depth | Use When | Evidence Budget | Required Output |
+| --- | --- | --- | --- |
+| Quick | 盘中问股, "今天能不能买", "快速看一下", news reaction | P0 only; 4-6 high-signal sources | Conclusion, 3-scenario probability, key evidence, key levels/risks, sources |
+| Standard | Default single-stock, ETF, index, sector, or theme report | P0 + targeted P1; stop when added sources are unlikely to change the view | Quick + 6-category score, fundamentals, valuation, peers, macro, invalidation |
+| Deep | Major decision, high-risk setup, "深度", "全维度", large move, earnings/FOMC/regulatory event | P0 + P1 + selected P2; use all 12 dimensions only when explicitly requested | Standard + extended dimensions, full data-quality review, sensitivity |
 
-## Workflow
+For multi-stock comparisons, run the minimum comparable workflow for each ticker first, then rank. Do not deep-dive every ticker unless requested.
 
-### Step 1: Define the target and horizon
+## Retrieval Workflow
 
-- **Target**: market, index, sector/theme, single stock, or comparison.
-- **Horizon**: short term 1–4 weeks, medium term 1–3 months, long term 6–12 months unless the user specifies otherwise.
-- **User objective**: trading, investing, risk review, earnings preview, or news reaction.
-- **Depth**: quick, standard, or deep (see Analysis Depth above).
+Prefer structured data tools when available. Otherwise use official and primary sources first, then reputable financial media/data aggregators, then broad search.
 
-### Step 2: Gather fresh evidence (parallel where possible)
+### P0: Must Gather
 
-**2a. Identify required data**
+Run these in parallel when tools allow:
 
-Based on analysis depth and task type, determine which queries to execute. Use `references/search-queries.md` for pre-built query templates. Select dimensions from `references/analytical-dimensions.md` for deep analysis.
+1. Quote snapshot: latest price, percent change, volume, 52-week range, market cap, and timestamp.
+2. Latest company or theme news: intraday plus the last 7 days, with event dates.
+3. Latest earnings, guidance, or filing: earnings release/10-Q/10-K/8-K/IR page.
+4. Market regime: SPY/QQQ or relevant index, VIX, 10-year Treasury yield, dollar, and sector ETF.
 
-**2b. Execute data collection in parallel rounds**
+If a P0 item is unavailable, mark it missing. Do not invent substitutes.
 
-Execute queries in parallel rounds as defined in `references/search-queries.md`:
+### P1: Standard Add-Ons
 
-- **Round 1 (P0 — must execute)**: Price/market data, latest quarterly earnings, latest news, market backdrop (SPX, VIX, Treasury yields, Dollar). Run these 4+ queries in parallel.
-- **Round 2 (P1 — standard reports)**: Analyst ratings/targets, valuation vs peers, SEC filings, technicals. Run these 4+ queries in parallel.
-- **Round 3 (P2 — deep analysis)**: Extended dimensions per the dimension selection matrix. Run dimension queries in parallel batches of up to 8.
-- **Round 4 (fill gaps)**: Based on data completeness, execute supplementary queries.
+Use only the P1 packs that can affect the user's decision:
 
-Use `WebSearch` for discovery and `WebFetch` for deep content extraction (SEC EDGAR files, IR pages, data aggregation pages). Prefer MCP Server tools (Yahoo Finance, Finnhub) if available for structured data.
+- Valuation and peers: forward P/E, EV/EBITDA, PEG, FCF yield, growth, margins.
+- Analyst revisions: consensus, target changes, estimate revisions, date and firm.
+- Technicals: trend, moving averages, support/resistance, RSI or momentum, volume-price behavior.
+- Filings and calls: latest 10-Q/10-K/8-K, transcript, management guidance, risk factors.
+- Positioning: short interest, options, insider transactions, institutional ownership when material.
 
-**2c. Record data quality metadata**
+### P2: Deep or Event-Driven Add-Ons
 
-For each key data point, record:
-- Data value and unit
-- Source URL or name
-- Source reliability grade (A/B/C/D per `references/data-quality.md`)
-- Data timestamp or publication date
+Read `references/analytical-dimensions.md` only when deep analysis or a specific risk area requires it. Select dimensions by materiality:
 
-### Step 3: Cross-validate material claims
+- Trading setup: short interest, options flow, seasonality, factor exposure.
+- Earnings reaction: guidance quality, analyst revisions, management tone, peer read-through.
+- Long-term investment: moat, capital allocation, management quality, supply chain/geography, ESG materiality.
+- Risk review: short interest, leverage/liquidity, regulatory/legal, supply chain/geography, governance.
 
-Before forming conclusions, apply the cross-validation rules from `references/data-quality.md`:
+## Evidence Ledger
 
-- **Must cross-validate (≥2 independent sources)**: quarterly revenue/EPS, management guidance, major news events, analyst rating changes, insider trading data, short interest, merger/acquisition announcements.
-- **Should cross-validate**: price/quotes, valuation multiples, institutional ownership changes, peer comparison data.
-- **Source conflict**: when sources disagree, prefer higher reliability grade (A > B > C > D), document the conflict, and explain your choice.
-- **Source independence**: republished content from the same wire service counts as ONE source, not multiple.
-- **D-grade sources** (social media, forums, anonymous): never use as sole evidence for any material claim.
+Maintain an internal evidence ledger before scoring:
 
-### Step 4: Build the analysis (probability + quantitative score)
+| Field | Requirement |
+| --- | --- |
+| Claim/data point | Concrete fact or metric |
+| Value/unit | Price, percent, multiple, date, or text summary |
+| Source | URL/name and source grade A/B/C/D |
+| Timestamp | Publication date, filing date, quote timestamp, or market session |
+| TTL status | Fresh, stale, unknown, or unavailable |
+| Independence | Independent source or same original source |
+| Thesis impact | Bullish, neutral, bearish, or only background |
 
-**4a. Qualitative probability view** (per `references/probability-framework.md`)
+Rules:
 
-Assign probabilities that sum to 100% across bullish, neutral/range-bound, and bearish scenarios for each relevant horizon. Tie each probability to concrete evidence and counter-evidence. Include confidence level: low, medium, or high.
+- No source, no material claim.
+- No reliable source, no strong conclusion.
+- Major facts require at least two independent sources unless they come directly from an A-grade primary source.
+- D-grade sources can support sentiment only; never use them as the sole basis for a fact.
+- If sources conflict, prefer A > B > C > D and explain the conflict if it affects the view.
 
-**4b. Quantitative score** (per `references/scoring-model.md`)
+## Data Quality Gate
 
-Score the target 0–100 across 6 categories:
-- Fundamentals (0–25): revenue growth, profitability, financial health, moat/growth drivers
-- Valuation (0–15): absolute valuation, growth-adjusted valuation, rate sensitivity
-- Catalysts (0–20): near-term events, catalyst quality, secular trends, surprise potential
-- Technicals (0–15): trend, support/resistance, volume-price relationship
-- Sentiment/Positioning (0–15): analyst sentiment, crowding, insider/buyback signals, retail sentiment
-- Macro/Regime (0–10): rates/monetary policy, cycle position, sector/style fit
+Apply `references/data-quality.md` before forming the final view:
 
-Use the quick scoring shortcut (6 category-level scores) for quick/standard analysis; use the full 21 sub-item scoring for deep analysis.
+- Complete: all P0 and decision-critical P1 data are fresh; confidence may be high if sources align.
+- Partial: 1-3 important items are missing/stale; cap confidence at medium.
+- Severe: core quote, news, or latest financials are missing/stale; cap confidence at low and avoid a strong buy/sell action.
 
-**4c. Consistency check**
+For quick answers, still state the quote/news timestamp and any missing P0 item.
 
-Verify the quantitative score and probability view are directionally consistent:
-- Score >70 + bullish probability <50% → **conflict, must re-evaluate**
-- Score <30 + bearish probability <45% → **conflict, must re-evaluate**
-- Score 45–54 + bullish or bearish >60% → **conflict, must re-evaluate**
+## Analysis Method
 
-If a conflict is found, identify the source of divergence, re-check data quality, and adjust until the two frameworks agree.
+Separate facts from interpretation. Use phrases such as "数据显示", "公司披露", "市场反映", and "我的推断是".
 
-### Step 5: Sensitivity analysis
+### Score
 
-For standard and deep analysis, assess how key variables affect the thesis:
+Use `references/scoring-model.md` after data collection:
 
-- **Revenue shock**: what if revenue −10% / +10% vs guidance?
-- **Rate shock**: what if Fed funds rate +100bp / −50bp?
-- **Valuation compression**: what if P/E multiple contracts 20%?
-- **Key catalyst failure**: what if the expected catalyst does not materialize?
+- Quick: score the 6 categories only if enough evidence exists; otherwise omit the total score and explain why.
+- Standard: score 6 categories on a 0-100 weighted basis.
+- Deep: score the 21 sub-items and show confidence for uncertain sub-scores.
+- Do not impute missing data as neutral. Mark the sub-score as estimated or unavailable and lower confidence.
 
-Label the main upside and downside risks with estimated magnitude of impact.
+### Probability
 
-### Step 6: Produce the report
+Use `references/probability-framework.md`:
 
-Use `references/report-template.md` for the structure. Include:
+- Probabilities must sum to 100% for each horizon.
+- Use 5 percentage-point increments unless a documented model justifies finer granularity.
+- Short-term weight: catalysts, technicals, sentiment, positioning.
+- Medium-term weight: fundamentals, valuation, estimates, macro.
+- Long-term weight: moat, capital allocation, management quality, secular trends.
 
-- Clear conclusion with action view
-- Probability table for each horizon
-- Quantitative score breakdown (by 6 categories, with sub-scores for deep analysis)
-- Sensitivity analysis scenarios (standard/deep)
-- Peer comparison matrix (standard/deep)
-- Key evidence with sources and timestamps
-- Counterarguments and invalidation conditions
-- Risks and watchlist
-- Data quality assessment (completeness, source reliability distribution, missing data)
+### Consistency Check
 
-For quick analysis, compress to: conclusion + probability + key evidence + risks + sources.
+Reconcile score and probability before finalizing:
 
-### Step 7: Include source notes and data freshness
+- Score >70 and bullish probability <50%: re-check overlooked risks.
+- Score <30 and bearish probability <45%: re-check overlooked support.
+- Score 45-54 and any directional probability >60%: re-check overconfidence.
 
-- State the market close or intraday timestamp used.
-- Include source reliability grade distribution (A/B/C/D count).
-- List any missing, stale, or conflicted data.
-- State data completeness: complete / partial / severe.
-- If source coverage is incomplete, put the limitation near the conclusion.
+If the final view remains mixed, say so directly and use hold/watch or wait-for-trigger language.
 
----
+## Report Output
 
-## Report Standards
+For quick reports, use:
 
-Read these references as needed:
+1. 结论先行: action view, confidence, data timestamp, data quality.
+2. 概率: bullish/neutral/bearish for the selected horizon.
+3. 关键证据: 3-6 bullets with source grade and date.
+4. 关键价位/触发条件: support/resistance, catalyst, invalidation.
+5. 风险 and next watch items.
+6. Sources and limitations.
 
-- `references/source-checklist.md` — required data and source hierarchy.
-- `references/probability-framework.md` — probability, confidence, and scenario rules.
-- `references/scoring-model.md` — 0–100 quantitative scoring across 6 categories (21 sub-items).
-- `references/data-quality.md` — data freshness TTL, source reliability grading, cross-validation rules, data completeness ratings.
-- `references/analytical-dimensions.md` — 12 extended analysis dimensions with data sources, interpretation rubrics, and cross-validation matrix.
-- `references/search-queries.md` — pre-built English/Chinese search query templates with priority levels and parallel execution strategy.
-- `references/report-template.md` — default Chinese report structure.
-- `references/agent-integration.md` — multi-agent orchestration patterns, tool chain setup, output JSON schema, and error handling.
+For standard and deep reports, use `references/report-template.md` and compress sections that do not affect the decision.
 
-The final report must include:
+Always include:
 
-- Clear conclusion: bullish, bearish, or neutral; buy, sell/reduce, hold/watch, or avoid when an action view is requested.
-- Forecast horizon and probability table (at minimum; add quantitative score for standard/deep).
-- Key evidence supporting the view, each with source grade and timestamp.
-- Counterarguments and invalidation conditions.
-- Risks and what to monitor next.
-- Source/data freshness notes with completeness rating.
+- Data-as-of timestamp or market session.
+- Source reliability distribution or at least source grades for key evidence.
+- Missing/stale/conflicted data.
+- Counterarguments and measurable invalidation signals.
+- Clear uncertainty language; never say "稳赚", "必涨", "必跌", or "准确预测".
 
----
+## Reference Loading
 
-## Safety and Quality Guardrails
+Load only what the task needs:
 
-- Do not fabricate prices, news, earnings numbers, analyst ratings, or SEC filing content.
-- Do not give personalized financial advice based on the user's private financial situation unless they provide that context and explicitly request suitability analysis; even then, keep the output framed as research support.
-- Avoid overprecision. Use rounded probabilities such as 55%, 30%, 15% unless a model or dataset justifies finer granularity.
-- Prefer ranges and scenarios over single-point price targets when uncertainty is high.
-- If the user asks for "accurate" or "guaranteed" predictions, explain that markets are probabilistic and provide the best evidence-weighted forecast with risks.
-- If sources conflict, show the conflict and explain which source is more reliable.
-- Mark every material data point with source reliability grade (A/B/C/D) and timestamp.
-- If data completeness is "severe," state the limitation prominently near the conclusion and consider deferring a clear buy/sell recommendation.
-- When quantitative score and probability view conflict, re-evaluate before finalizing — do not present contradictory signals without explanation.
+- `references/source-checklist.md`: minimum evidence by task.
+- `references/search-queries.md`: query packs and parallel retrieval strategy.
+- `references/data-quality.md`: TTL, source grades, cross-validation, completeness.
+- `references/scoring-model.md`: scoring rules and score-probability reconciliation.
+- `references/probability-framework.md`: scenario probabilities and action mapping.
+- `references/report-template.md`: standard/deep Chinese report structure.
+- `references/analytical-dimensions.md`: deep or extended dimension selection.
+- `references/agent-integration.md`: only when configuring this skill for another agent or plugin surface.
+
+If loaded from the Codex plugin subdirectory `skills/analyze-us-stocks`, resolve references from `../../references/...` when `references/...` is not present.

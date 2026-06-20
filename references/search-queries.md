@@ -13,6 +13,14 @@
 | **P2** | 扩展 | 提升全面性 | 深度研究和风险审查时执行 |
 | **P3** | 可选 | 锦上添花 | 仅在特定情境下执行 |
 
+### 执行原则
+
+- **少而准**：每个数据问题先用 1 个最可能命中的英文查询；需要交叉验证时再追加第二个独立来源查询。
+- **官方优先**：财报、指引、8-K、Form 4、13F、政策和宏观数据优先使用 SEC、公司 IR、Fed/BLS/BEA/Treasury/FRED。
+- **按需扩展**：Quick 只跑 P0；Standard 跑 P0 + 影响结论的 P1；Deep 跑 P0 + P1 + 被 `analytical-dimensions.md` 选中的 P2。
+- **去重**：多个网页转载同一 Reuters/Bloomberg/AP 原文时，只算一个独立来源。
+- **停止条件**：当关键事实已由一手或两个独立来源验证，且新增搜索只重复已有事实时停止。
+
 ---
 
 ## 二、P0 — 必须执行的查询
@@ -21,8 +29,8 @@
 
 ```
 # EN
-"{TICKER} stock price today market cap volume"
-"{TICKER} 52 week high low current price performance"
+"{TICKER} quote today price market cap volume 52 week range"
+"{TICKER} stock price today Yahoo Finance Nasdaq"
 
 # 中文
 "{TICKER} 股票 今日行情 市值 成交量"
@@ -33,8 +41,9 @@
 
 ```
 # EN
-"{TICKER} latest quarterly earnings results revenue EPS Q{1-4} {YEAR}"
-"{TICKER} earnings guidance outlook forecast {YEAR}"
+"{TICKER} latest quarterly earnings release revenue EPS guidance {YEAR}"
+"{TICKER} investor relations quarterly results guidance {YEAR}"
+"{TICKER} latest 10-Q 10-K 8-K SEC filing earnings"
 
 # 中文
 "{TICKER} 最新季度财报 营收 每股收益"
@@ -46,7 +55,7 @@
 ```
 # EN
 "{TICKER} news today latest developments"
-"{TICKER} breaking news {CURRENT_MONTH} {YEAR}"
+"{TICKER} Reuters Bloomberg CNBC latest news {CURRENT_MONTH} {YEAR}"
 
 # 中文
 "{TICKER} 最新消息 新闻 动态 {CURRENT_MONTH}"
@@ -334,20 +343,20 @@
 ### 第 1 轮（并行，P0 查询）
 
 ```
-WebSearch: "{TICKER} stock price today market cap"
-WebSearch: "{TICKER} latest quarterly earnings results Q{1-4}"
+WebSearch: "{TICKER} quote today price market cap volume 52 week range"
+WebSearch: "{TICKER} latest quarterly earnings release revenue EPS guidance"
 WebSearch: "{TICKER} news today latest developments"
-WebSearch: "US stock market S&P 500 VIX Treasury yields today"
+WebSearch: "US stock market S&P 500 Nasdaq VIX 10 year Treasury yield today"
 ```
 
 ### 第 2 轮（并行，P1 查询，在第 1 轮完成后）
 
 ```
-WebSearch: "{TICKER} analyst rating consensus target price"
-WebSearch: "{TICKER} P/E PEG valuation vs industry"
-WebSearch: "{TICKER} SEC filing 10-K 10-Q latest"
-WebSearch: "{TICKER} technical analysis trend support resistance"
-WebSearch: "{TICKER} vs {PEER1} {PEER2} comparison valuation"
+WebSearch: "{TICKER} analyst rating consensus target price estimate revisions"
+WebSearch: "{TICKER} forward P/E PEG EV EBITDA FCF yield valuation peers"
+WebSearch: "{TICKER} SEC filing 10-K 10-Q 8-K latest risk factors"
+WebSearch: "{TICKER} technical analysis moving averages support resistance RSI volume"
+WebSearch: "{TICKER} vs {PEER1} {PEER2} valuation growth margins comparison"
 ```
 
 ### 第 3 轮（并行，P2 查询，按需执行）
@@ -415,3 +424,5 @@ Agent 在数据采集完成后，确认以下查询已覆盖：
 □ P2: 同行对比数据
 □ 数据时间戳已记录
 ```
+
+如果 Quick 分析已覆盖 P0 且没有明显冲突，不要继续跑 P1/P2。把节省的时间用于核对时间戳、来源等级和反证。

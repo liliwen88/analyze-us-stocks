@@ -22,7 +22,7 @@
 
 ### 1.2 OpenAI GPTs / Assistants API
 
-**配置入口**：`agents/openai.yaml` — 包含 display_name、capabilities、output_schema、recommended_tools
+**配置入口**：`agents/openai.yaml` — 只保留 UI 元数据、默认提示和可选工具依赖。完整工作流、schema 和分析规则保留在 `SKILL.md` 与 `references/`，避免元数据文件过重。
 
 **Function Calling 工具定义**（建议在 GPT/Assistant 配置中添加）：
 
@@ -83,10 +83,10 @@ analyze-us-stocks/
 ├── .mcp.json                     # MCP Server 配置（Yahoo Finance, Finnhub, Alpha Vantage）
 ├── skills/
 │   └── analyze-us-stocks/
-│       ├── SKILL.md              # Skill 指令（Codex 格式 YAML frontmatter + 完整工作流）
+│       ├── SKILL.md              # Skill 指令（仅 name + description frontmatter + 工作流）
 │       └── agents/
-│           └── openai.yaml       # Skill 元数据（capabilities, recommended_tools, output_schema, analysis_depth）
-├── references/                   # 8 个参考文档（Codex 按需加载）
+│           └── openai.yaml       # 简短 UI 元数据与可选工具依赖
+├── references/                   # 8 个参考文档（按需加载；插件子目录可用 ../../references）
 ├── SKILL.md                      # Claude Code 兼容入口（保留向后兼容）
 └── agents/
     └── openai.yaml               # 独立 GPTs/Assistants 配置（保留向后兼容）
@@ -113,9 +113,9 @@ analyze-us-stocks/
 | `alpha-vantage` | 行情、技术指标、经济指标 | 是（`ALPHA_VANTAGE_API_KEY`） |
 
 **Codex 专属特性**：
-- Codex 自动识别 `SKILL.md` 的 YAML frontmatter（`name`, `description`, `metadata`）
-- Skill 的 `agents/openai.yaml` 提供 Codex 所需的工具依赖声明和输出 Schema
-- `references/` 下的 8 个 .md 文件按需由 Codex 加载到上下文
+- Codex 自动识别 `SKILL.md` 的 YAML frontmatter（仅 `name`, `description`）
+- Skill 的 `agents/openai.yaml` 只提供简短界面元数据、默认提示和工具依赖
+- `references/` 下的 8 个 .md 文件按需加载；从 `skills/analyze-us-stocks` 目录加载时使用 `../../references/...`
 - 支持 Codex 的多 Agent 协作模式（Workflow/Agent 工具原生兼容 §3 的 4 种模式）
 - MCP Server 通过 `.mcp.json` 声明，Codex 自动启动和管理
 
@@ -476,9 +476,10 @@ Agent 在生成报告时，应同时输出以下结构化 JSON（便于下游消
 ### 6.2 并行化
 
 - P0 查询（行情、财报、新闻、大盘）：**4 个并行 WebSearch**
-- P1 查询（分析师、估值、技术面、SEC）：**4 个并行 WebSearch**
-- P2 查询（扩展维度）：**根据维度选择矩阵，最多 8 个并行 WebSearch**
-- WebFetch（深度抓取）：**在 WebSearch 结果返回后，按需并行**
+- P1 查询（分析师、估值、技术面、SEC）：只执行会影响结论的查询，通常 **3-5 个并行 WebSearch**
+- P2 查询（扩展维度）：根据材料性选择，最多 **6 个并行 WebSearch**；全部 12 维只在用户明确要求或重大决策时执行
+- WebFetch（深度抓取）：在 WebSearch 找到一手来源后按需并行，优先 SEC、公司 IR 和政府/交易所页面
+- 停止条件：当关键事实已由 A 级或两个独立来源验证，且新增搜索只重复已有事实时停止
 
 ### 6.3 超时处理
 

@@ -1,7 +1,7 @@
 {
   "name": "analyze-us-stocks",
-  "version": "1.0.0",
-  "description": "US stock comprehensive analysis with 12-dimensional deep research, quantitative scoring, and probability framework for investment decisions",
+  "version": "1.1.0",
+  "description": "Efficient US stock analysis with current evidence, source grading, targeted dimensions, quantitative scoring, and probability-based action views",
   "author": {
     "name": "liliwen"
   },
@@ -18,8 +18,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "美股综合分析",
-    "shortDescription": "结合行情、新闻、财报、技术面、12维深度分析、量化评分和概率框架生成中文美股综合研报",
-    "longDescription": "专业的美国股票分析技能，支持三层分析深度（快速/标准/深度），涵盖：\n• 实时行情与市场背景\n• 基本面分析（营收、利润率、FCF、资产负债表、指引）\n• 技术面分析（趋势、均线、支撑阻力、量价关系）\n• 估值分析（PE/PEG/EV-EBITDA/同行对比）\n• 新闻催化与情绪分析\n• 三情景概率预测（看涨/中性/看跌，概率和=100%）\n• 0-100量化评分（6大类21子项）\n• 同行对比矩阵（估值/增长/盈利多维度）\n• 12维扩展分析：内幕交易、机构持仓、空头持仓、期权流、因子暴露、季节性、竞争护城河、管理层质量、供应链风险、资本配置、ESG评估\n• 敏感性分析（营收/利率/估值变动场景）\n• 多时间框架预测（短期1-4周/中期1-3月/长期6-12月）\n• 数据质量管控：来源可靠性A/B/C/D四级评分、时效性TTL检测、多源交叉验证\n\n适用于各类美股投资研究和决策场景，输出中文结构化研报。",
+    "shortDescription": "用最新行情、财报和新闻生成概率化美股研判",
+    "longDescription": "专业的美国股票分析技能，支持快速、标准、深度三层工作流。默认先做任务分诊和 P0 核心证据采集，再按决策需要扩展到基本面、估值、技术面、同行、情绪仓位、宏观和特定风险维度。\n\n核心能力包括：实时行情与市场背景、最新财报/指引/SEC 文件核验、新闻催化分析、三情景概率预测、0-100 量化评分、同行对比、敏感性分析、反证与失效条件、来源可靠性 A/B/C/D 评分、TTL 时效检查和多源交叉验证。\n\n深度分析会按材料性选择扩展维度，例如内幕交易、机构持仓、空头持仓、期权流、因子暴露、季节性、竞争护城河、管理层质量、供应链风险、资本配置和 ESG；只有在用户明确要求或重大决策场景下才执行全部维度。默认输出中文、结论先行，并明确数据时间、来源质量、缺失项和风险。",
     "developerName": "liliwen",
     "category": "Data Analytics",
     "capabilities": [
@@ -48,7 +48,7 @@
     ],
     "defaultPrompt": [
       "Use analyze-us-stocks to analyze AAPL with latest data and generate a standard report in Chinese",
-      "Use analyze-us-stocks to do a deep analysis of NVDA including all 12 extended dimensions",
+      "Use analyze-us-stocks to do a deep analysis of NVDA with material extended dimensions and data-quality checks",
       "Use analyze-us-stocks to quickly scan TSLA before market open today"
     ]
   }

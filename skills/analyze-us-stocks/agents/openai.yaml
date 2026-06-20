@@ -1,171 +1,19 @@
-# Codex Skill Metadata: 美股综合分析
-# This file provides UI metadata and tool dependencies for the analyze-us-stocks skill
-# when loaded in OpenAI Codex CLI.
-#
-# Reference: https://developers.openai.com/codex/skills
-
 interface:
   display_name: "美股综合分析"
-  short_description: "结合行情、新闻、财报、技术面、12维深度分析、量化评分和概率框架生成中文美股综合研报"
-  default_prompt: "Use analyze-us-stocks to analyze a US stock or market theme with latest data, news, 12-dimensional analysis, quantitative scoring, probability scenarios, evidence, and risks. Follow the workflow: define target/horizon → parallel data collection → cross-validate → quantitative score + probability → sensitivity analysis → produce report. Apply data-quality.md rules for source grading (A/B/C/D), freshness TTL, and cross-validation. Use analytical-dimensions.md to select extended dimensions for deep analysis."
+  short_description: "用最新行情、财报和新闻生成概率化美股研判"
+  default_prompt: "Use $analyze-us-stocks to analyze a US stock with current data, source-graded evidence, probability scenarios, a concise action view, and risks."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "yahoo-finance"
+      description: "Structured quote, history, fundamentals, holders, and options data when configured."
+    - type: "mcp"
+      value: "finnhub"
+      description: "Quotes, company news, fundamentals, SEC filings, insider transactions, analyst trends, and ESG data when configured."
+    - type: "mcp"
+      value: "alpha-vantage"
+      description: "Market data, technical indicators, and macro series when configured."
 
 policy:
   allow_implicit_invocation: true
-
-# Agent capabilities declared to Codex
-capabilities:
-  - realtime_market_data     # 实时行情获取
-  - fundamental_analysis     # 基本面分析（财报、利润率、FCF、指引）
-  - technical_analysis       # 技术面分析（趋势、均线、支撑阻力、量价）
-  - valuation_analysis       # 估值分析（PE/PEG/EV-EBITDA/同行对比）
-  - news_sentiment           # 新闻催化与情绪分析
-  - probability_forecast     # 三情景概率预测（看涨/中性/看跌）
-  - quantitative_scoring     # 0-100 六类21子项量化评分
-  - peer_comparison          # 同行估值-增长-盈利对比矩阵
-  - risk_assessment          # 风险评估与失效条件识别
-  - insider_analysis         # 内幕交易分析 (Form 4)
-  - institutional_analysis   # 机构持仓分析 (13F)
-  - short_interest_analysis  # 空头持仓与轧空风险评估
-  - options_flow_analysis    # 期权流分析
-  - factor_exposure          # 因子暴露分析（动量/价值/质量/低波）
-  - seasonality_analysis     # 季节性模式分析
-  - competitive_moat         # 竞争护城河评估
-  - management_quality       # 管理层质量评估
-  - supply_chain_risk        # 供应链与地理风险评估
-  - capital_allocation       # 资本配置分析
-  - esg_assessment           # ESG与重大性因素评估
-  - sensitivity_analysis     # 敏感度分析（利率/营收/估值变动场景）
-  - multi_horizon_forecast   # 多时间框架预测（短期/中期/长期）
-
-# Required and recommended tools
-recommended_tools:
-  required:
-    - web_search             # WebSearch — 实时数据获取的核心工具
-  recommended:
-    - web_fetch              # WebFetch — 深度页面内容抓取（SEC EDGAR、IR页面）
-  optional:
-    - yahoo_finance_mcp      # Yahoo Finance MCP — 结构化金融数据
-    - finnhub_mcp            # Finnhub MCP — 实时行情、SEC、内幕交易、ESG
-    - alpha_vantage_mcp      # Alpha Vantage MCP — 行情与技术指标
-
-# Reference documents (loaded from plugin root references/)
-# Codex loads these relative to the plugin root directory
-references:
-  analytical_dimensions: "references/analytical-dimensions.md"
-  data_quality: "references/data-quality.md"
-  scoring_model: "references/scoring-model.md"
-  search_queries: "references/search-queries.md"
-  probability_framework: "references/probability-framework.md"
-  report_template: "references/report-template.md"
-  source_checklist: "references/source-checklist.md"
-  agent_integration: "references/agent-integration.md"
-
-# Analysis depth configuration
-analysis_depth:
-  quick:
-    description: "快速扫描 — 5-10分钟，盘中快速问股"
-    dimensions: [price, news, technicals, probability]
-    scoring: "6-category quick scoring only"
-    sections: [conclusion, probability, key_evidence, risks, sources]
-  standard:
-    description: "标准报告 — 15-30分钟，常规个股/市场分析"
-    dimensions: [price, fundamentals, valuation, catalysts, technicals, sentiment, macro, peers]
-    scoring: "6-category scoring"
-    sections: [conclusion, probability, quantitative_score, market_background, fundamentals, news_catalysts, technicals, sensitivity_analysis, counterarguments, watchlist, sources]
-  deep:
-    description: "深度研究 — 30+分钟，重大投资决策"
-    dimensions: [all_12_extended_dimensions]
-    scoring: "full 21-sub-item scoring"
-    sections: [conclusion, probability, quantitative_score_detail, market_background, fundamentals, peer_comparison_matrix, news_catalysts, technicals, extended_dimensions_detail, sensitivity_analysis, counterarguments, watchlist, data_quality_assessment, sources]
-
-# Output JSON Schema (stock-analysis-report-v1)
-# Full schema documented in references/agent-integration.md §4
-output_schema:
-  type: object
-  required: [metadata, conclusion, probability, key_evidence, risks, sources_summary]
-  properties:
-    metadata:
-      type: object
-      required: [ticker, analysis_date, data_as_of, analysis_depth, horizons]
-      properties:
-        ticker: { type: string }
-        company_name: { type: string }
-        analysis_date: { type: string, format: date }
-        data_as_of: { type: string }
-        analysis_depth: { type: string, enum: [quick, standard, deep] }
-        horizons: { type: array, items: { type: string } }
-    conclusion:
-      type: object
-      required: [short_term_view, action, confidence, core_reasons]
-      properties:
-        short_term_view: { type: string, enum: [bullish, neutral, bearish] }
-        medium_term_view: { type: string, enum: [bullish, neutral, bearish] }
-        long_term_view: { type: string, enum: [bullish, neutral, bearish] }
-        action: { type: string, enum: [buy, add, hold, watch, reduce, avoid] }
-        confidence: { type: string, enum: [low, medium, high] }
-        core_reasons: { type: array, items: { type: string }, maxItems: 5 }
-        data_quality: { type: string, enum: [complete, partial, severe] }
-    quantitative_score:
-      type: object
-      required: [total]
-      properties:
-        total: { type: integer, minimum: 0, maximum: 100 }
-        breakdown: { type: object }
-    probability:
-      type: object
-      properties:
-        short_term: { $ref: "#/definitions/probabilityTable" }
-        medium_term: { $ref: "#/definitions/probabilityTable" }
-        long_term: { $ref: "#/definitions/probabilityTable" }
-    key_evidence:
-      type: object
-      properties:
-        bullish: { type: array, items: { $ref: "#/definitions/evidenceItem" } }
-        bearish: { type: array, items: { $ref: "#/definitions/evidenceItem" } }
-    risks:
-      type: array
-      items:
-        type: object
-        properties:
-          risk: { type: string }
-          severity: { type: string, enum: [low, medium, high, critical] }
-          probability: { type: string, enum: [low, medium, high] }
-    invalidation_signals:
-      type: array
-      items: { type: string }
-      description: "Specific, measurable triggers that would invalidate the thesis"
-    peer_comparison:
-      type: array
-      items:
-        type: object
-        properties:
-          ticker: { type: string }
-          score: { type: integer }
-          valuation_rank: { type: integer }
-          growth_rank: { type: integer }
-    sources_summary:
-      type: object
-      required: [data_completeness]
-      properties:
-        total_sources: { type: integer }
-        grade_distribution: { type: object }
-        data_completeness: { type: string, enum: [complete, partial, severe] }
-        missing_data: { type: array, items: { type: string } }
-        stale_data: { type: array, items: { type: string } }
-        source_conflicts: { type: array, items: { type: string } }
-
-definitions:
-  probabilityTable:
-    type: object
-    required: [bullish, neutral, bearish]
-    properties:
-      bullish: { type: integer, minimum: 0, maximum: 100 }
-      neutral: { type: integer, minimum: 0, maximum: 100 }
-      bearish: { type: integer, minimum: 0, maximum: 100 }
-  evidenceItem:
-    type: object
-    required: [point, source, date]
-    properties:
-      point: { type: string }
-      source: { type: string }
-      date: { type: string }

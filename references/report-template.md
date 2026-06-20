@@ -4,6 +4,16 @@ Use this structure by default. Compress sections for quick requests, but keep th
 
 ---
 
+## 使用规则
+
+- Quick 报告只保留第 1、2、6、7、8、9 节的压缩版。
+- Standard 报告展示 6 大类评分；Deep 报告才展开 21 子项和扩展维度。
+- 每条关键证据都要带来源等级和日期，例如 `[A-10-Q, 2026-05-10]`。
+- 如果数据质量为 Partial/Severe，把局限写进第 1 节，不要只放在末尾。
+- 若某节对结论没有影响，写一句"本次未发现会改变结论的材料信息"即可，不要填充泛泛内容。
+
+---
+
 ## 1. 结论先行
 
 - 标的/主题：
@@ -22,9 +32,9 @@ Use this structure by default. Compress sections for quick requests, but keep th
 
 | 情景 | 概率 | 可能表现 | 主要依据 | 触发/失效条件 |
 | --- | ---: | --- | --- | --- |
-| 📈 上涨 | XX% | | | |
-| 📊 震荡 | XX% | | | |
-| 📉 下跌 | XX% | | | |
+| 上涨 | XX% | | | |
+| 震荡 | XX% | | | |
+| 下跌 | XX% | | | |
 
 Keep probabilities rounded (5pp increments) and make them sum to 100%.
 
@@ -114,11 +124,11 @@ Mention trend, moving averages, support/resistance, volume, relative strength, a
 
 | 情景 | 变量变动 | 预计影响 | 对评分的改变 | 发生概率 |
 | --- | --- | --- | ---: | ---: |
-| 📈 上行 | 营收 +10% | | +X 分 | |
-| 📈 上行 | 利率 −50bp | | +X 分 | |
-| 📉 下行 | 营收 −10% | | −X 分 | |
-| 📉 下行 | 市盈率压缩 20% | | −X 分 | |
-| 📉 下行 | 催化事件未兑现 | | −X 分 | |
+| 上行 | 营收 +10% | | +X 分 | |
+| 上行 | 利率 −50bp | | +X 分 | |
+| 下行 | 营收 −10% | | −X 分 | |
+| 下行 | 市盈率压缩 20% | | −X 分 | |
+| 下行 | 催化事件未兑现 | | −X 分 | |
 
 **综合敏感性结论**：
 - 主要上行驱动：
@@ -157,7 +167,7 @@ List the next 3-6 events/data points that could change the view: earnings date, 
 
 | 事件 | 预计时间 | 重要性 | 关注点 |
 | --- | --- | --- | --- |
-| | | 🔴 关键 / 🟡 重要 / 🟢 一般 | |
+| | | 关键 / 重要 / 一般 | |
 
 ---
 
